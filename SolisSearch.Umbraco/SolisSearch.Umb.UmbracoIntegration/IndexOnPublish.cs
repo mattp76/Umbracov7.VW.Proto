@@ -45,6 +45,11 @@ namespace SolisSearch.Umb.UmbracoIntegration
             else
             {
                 Initializer.InitSolr(CurrentConfiguration.SolrServer.Address);
+                Initializer.InitSolr(CurrentConfiguration.SolrServer.Address);
+
+
+
+                //https://github.com/SolrNet/SolrNet/blob/master/Documentation/Multi-core-instance.md
                 string appSetting = ConfigurationManager.AppSettings["umbracoConfigurationStatus"];
                 if (!string.IsNullOrWhiteSpace(appSetting))
                 {
