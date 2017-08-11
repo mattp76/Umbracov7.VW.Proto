@@ -1,0 +1,11 @@
+.image-editor {
+   /* height:150px !important;*/
+}
+
+#placehere-container {
+    height:auto;
+    padding-top:30px;
+    min-height:200px;
+    display:block;
+    position:relative;
+}

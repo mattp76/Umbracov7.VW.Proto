@@ -1,0 +1,6 @@
+﻿ 2017-08-08 12:46:51,848 [P21296/D2/T242] INFO  umbraco.BusinessLogic.Log - Log scrubbed.  Removed all items older than 2017-08-07 12:46:51
+ 2017-08-08 16:46:52,387 [P21296/D2/T254] INFO  umbraco.BusinessLogic.Log - Log scrubbed.  Removed all items older than 2017-08-07 16:46:52
+ 2017-08-08 17:16:47,649 [P21296/D2/T254] INFO  Umbraco.Core.PluginManager - Resolving umbraco.interfaces.IDiscoverable
+ 2017-08-08 17:16:47,652 [P21296/D2/T254] INFO  Umbraco.Core.PluginManager - Resolved umbraco.interfaces.IDiscoverable (took 2ms)
+ 2017-08-08 17:16:47,653 [P21296/D2/T254] INFO  Umbraco.Core.PluginManager - Resolving umbraco.interfaces.IAction
+ 2017-08-08 17:16:47,664 [P21296/D2/T254] INFO  Umbraco.Core.PluginManager - Resolved umbraco.interfaces.IAction (took 11ms)
