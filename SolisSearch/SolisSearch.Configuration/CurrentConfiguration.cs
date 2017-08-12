@@ -38,6 +38,14 @@ namespace SolisSearch.Configuration
             }
         }
 
+        public static Cores Cores
+        {
+            get
+            {
+                return CurrentConfiguration.solisSearchConfiguration.Cores;
+            }
+        }
+
         public static SolrServer SolrServer
         {
             get

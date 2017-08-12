@@ -164,5 +164,10 @@ namespace SolisSearch.Entities
         {
             this.CmsProperties = (IDictionary<string, object>)new Dictionary<string, object>();
         }
+
+        public CmsSearchResultItem Clone()
+        {
+            return (CmsSearchResultItem)MemberwiseClone();
+        }
     }
 }

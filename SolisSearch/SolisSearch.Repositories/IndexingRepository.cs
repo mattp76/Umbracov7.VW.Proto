@@ -1,4 +1,5 @@
-﻿using HtmlAgilityPack;
+﻿using AutoMapper;
+using HtmlAgilityPack;
 using Microsoft.Practices.ServiceLocation;
 using SolisSearch.Configuration;
 using SolisSearch.Configuration.ConfigurationElements;
@@ -7,6 +8,7 @@ using SolisSearch.Extensions;
 using SolisSearch.Helpers;
 using SolisSearch.Interfaces;
 using SolisSearch.Log;
+using SolisSearch.Mapping;
 using SolisSearch.Parsers;
 using SolrNet;
 using System;
@@ -27,13 +29,28 @@ namespace SolisSearch.Repositories
         {
             this.cmsIndexer = cmsIndexer;
             this.log = log;
+
+            AutoMapperWebConfiguration.Configure();
         }
 
         public void IndexItem(CmsSearchResultItem content)
         {
-            ISolrOperations<CmsSearchResultItem> instance = ServiceLocator.Current.GetInstance<ISolrOperations<CmsSearchResultItem>>();
-            instance.Add(content);
-            instance.Commit();
+            var contentClone = Mapper.Map<CmsSearchResultItemClone>(content);
+
+            if (ServiceLocator.Current.GetAllInstances<ISolrOperations<CmsSearchResultItem>>().Count() > 0)
+            {
+                ISolrOperations<CmsSearchResultItem> instance = ServiceLocator.Current.GetInstance<ISolrOperations<CmsSearchResultItem>>();
+                instance.Add(content);
+                instance.Commit();
+            }
+
+            if (ServiceLocator.Current.GetAllInstances<ISolrOperations<CmsSearchResultItemClone>>().Count() > 0)
+            {
+                ISolrOperations<CmsSearchResultItemClone> instanceClone = ServiceLocator.Current.GetInstance<ISolrOperations<CmsSearchResultItemClone>>();
+                instanceClone.Add(contentClone);
+                instanceClone.Commit();
+            }
+
         }
 
         public void IndexNode(int id)

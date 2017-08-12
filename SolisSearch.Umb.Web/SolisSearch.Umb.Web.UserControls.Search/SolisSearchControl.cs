@@ -77,6 +77,7 @@ namespace SolisSearch.Umb.Web.UserControls.Search
         protected void btnRebuildIndex_Click(object sender, EventArgs e)
         {
             IndexingRepository indexingRepository = new IndexingRepository((ICmsIndexer)new UmbracoIndexer(), (ILogFacade)new LogFacade(typeof(IndexingRepository)));
+           
             try
             {
                 DateTime now1 = DateTime.Now;

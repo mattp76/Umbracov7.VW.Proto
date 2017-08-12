@@ -498,7 +498,9 @@
     <Content Include="config\404handlers.config" />
     <Content Include="App_Plugins\PMGVideoPlayer\package.manifest" />
     <Content Include="App_Plugins\ImageEditor\package.manifest" />
-    <Content Include="config\SolisSearch.config" />
+    <Content Include="config\SolisSearch.config">
+      <SubType>Designer</SubType>
+    </Content>
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />

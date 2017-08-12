@@ -36,6 +36,20 @@ namespace SolisSearch.Configuration
             }
         }
 
+        [ConfigurationProperty("Cores")]
+        [ConfigurationCollection(typeof(Cores), AddItemName = "Core", ClearItemsName = "clear", RemoveItemName = "remove")]
+        public Cores Cores
+        {
+            get
+            {
+                return (Cores)this["Cores"];
+            }
+            set
+            {
+                this["Cores"] = (object)value;
+            }
+        }
+
         [ConfigurationProperty("DocTypes")]
         [ConfigurationCollection(typeof(DocTypes), AddItemName = "DocType", ClearItemsName = "clear", RemoveItemName = "remove")]
         public DocTypes DocTypes

@@ -30,20 +30,30 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AutoMapper, Version=3.3.1.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoMapper.3.3.1\lib\net40\AutoMapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="AutoMapper.Net4, Version=3.3.1.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoMapper.3.3.1\lib\net40\AutoMapper.Net4.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="HtmlAgilityPack">
       <HintPath>..\Libs\HtmlAgilityPack.dll</HintPath>
     </Reference>
     <Reference Include="HttpWebAdapters">
       <HintPath>..\Libs\HttpWebAdapters.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.ServiceLocation">
-      <HintPath>..\Libs\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\CommonServiceLocator.1.0\lib\NET35\Microsoft.Practices.ServiceLocation.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="PackageActionsContrib">
       <HintPath>..\Libs\PackageActionsContrib.dll</HintPath>
     </Reference>
-    <Reference Include="SolrNet">
-      <HintPath>..\Libs\SolrNet.dll</HintPath>
+    <Reference Include="SolrNet, Version=0.4.0.4001, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SolrNet.0.4.0.4001\lib\SolrNet.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
@@ -58,7 +68,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SolisSearch.Configuration.ConfigurationElements\Core.cs" />
     <Compile Include="SolisSearch.Configuration.ConfigurationElements\DocType.cs" />
+    <Compile Include="SolisSearch.Configuration.ConfigurationElements\Cores.cs" />
     <Compile Include="SolisSearch.Configuration.ConfigurationElements\DocTypes.cs" />
     <Compile Include="SolisSearch.Configuration.ConfigurationElements\Facet.cs" />
     <Compile Include="SolisSearch.Configuration.ConfigurationElements\FacetRange.cs" />
@@ -72,6 +84,7 @@
     <Compile Include="SolisSearch.Configuration.ConfigurationElements\SolrServer.cs" />
     <Compile Include="SolisSearch.Configuration\CurrentConfiguration.cs" />
     <Compile Include="SolisSearch.Configuration\SolisSearchConfigurationSection.cs" />
+    <Compile Include="SolisSearch.Entities\CmsSearchResultItemClone.cs" />
     <Compile Include="SolisSearch.Entities\CmsSearchResultItem.cs" />
     <Compile Include="SolisSearch.Entities\StandardQuery.cs" />
     <Compile Include="SolisSearch.Entities\Statistics.cs" />
@@ -90,6 +103,7 @@
     <Compile Include="SolisSearch.Licensing\License.cs" />
     <Compile Include="SolisSearch.Log.Enum\LogLevel.cs" />
     <Compile Include="SolisSearch.Log\ILogFacade.cs" />
+    <Compile Include="SolisSearch.Mapping\AutoMapperWebConfiguration.cs" />
     <Compile Include="SolisSearch.Parsers\DefaultParser.cs" />
     <Compile Include="SolisSearch.Repositories\IndexingRepository.cs" />
     <Compile Include="SolisSearch.Repositories\SearchRepository.cs" />
@@ -98,8 +112,13 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="SolrNet.chm" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="changelog.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\packages\AutoMapper.3.3.1\tools\AutoMapper.targets" Condition="Exists('..\packages\AutoMapper.3.3.1\tools\AutoMapper.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
