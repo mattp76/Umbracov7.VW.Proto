@@ -62,6 +62,7 @@ namespace SolisSearch.Umb.UmbracoIntegration
                         ContentService.Published += ContentServiceOnPublished;
                         ContentService.Deleted += ContentServiceOnDeleted;
                         ContentService.Deleting += ContentServiceOnDeleted;
+                        ContentService.Trashed += ContentServiceOnTrashed;
                     }
                     else
                     {
@@ -160,6 +161,12 @@ namespace SolisSearch.Umb.UmbracoIntegration
             {
                 indexingRepository.DeleteFromIndex(n.Id);
             }
+        }
+
+        private void ContentServiceOnTrashed(IContentService sender, MoveEventArgs<IContent> MoveEventArgs)
+        {
+            IndexingRepository indexingRepository = new IndexingRepository((ICmsIndexer)new UmbracoIndexer(), (ILogFacade)new LogFacade(typeof(IndexingRepository)));
+            indexingRepository.DeleteFromIndex(MoveEventArgs.Entity.Id);
         }
 
 
