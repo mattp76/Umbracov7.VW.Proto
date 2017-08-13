@@ -90,6 +90,7 @@
     <Compile Include="SolisSearch.Entities\Statistics.cs" />
     <Compile Include="SolisSearch.Extensions\DateExtensions.cs" />
     <Compile Include="SolisSearch.Extensions\StringExtensions.cs" />
+    <Compile Include="SolisSearch.Helpers\InstanceHelper.cs" />
     <Compile Include="SolisSearch.Helpers\FieldNameHelper.cs" />
     <Compile Include="SolisSearch.Helpers\ParsedRange.cs" />
     <Compile Include="SolisSearch.Helpers\RangeFormatHelper.cs" />

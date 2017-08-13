@@ -94,6 +94,26 @@ namespace SolisSearch.Umb.Web.UserControls.Search
             }
         }
 
+
+        protected void btnClearIndex_Click(object sender, EventArgs e)
+        {
+            IndexingRepository indexingRepository = new IndexingRepository((ICmsIndexer)new UmbracoIndexer(), (ILogFacade)new LogFacade(typeof(IndexingRepository)));
+
+            try
+            {
+                DateTime now1 = DateTime.Now;
+                indexingRepository.ClearIndex();
+                DateTime now2 = DateTime.Now;
+                this.LoadStatistics();
+                this.lblStatus.Text = string.Format("Done, index cleared in {0} seconds.", (object)(now2 - now1).TotalSeconds.ToString("N2"));
+            }
+            catch (Exception ex)
+            {
+                this.lblStatus.Text = "An error occured, index not cleared. Errormessage: " + ex.Message;
+                this.log.AddLogentry(SolisSearch.Log.Enum.LogLevel.Error, "Error rebuilding index", ex);
+            }
+        }
+
         protected void lbViewConfig_Click(object sender, EventArgs e)
         {
             if (!File.Exists(this.Server.MapPath("~\\config\\SolisSearch.config")))

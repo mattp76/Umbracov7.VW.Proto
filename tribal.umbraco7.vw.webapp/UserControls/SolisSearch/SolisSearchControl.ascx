@@ -38,7 +38,8 @@
         <% } %>
     </li>
 </ul>
-    <asp:Button ID="btnRebuildIndex" runat="server" Text="Rebuild Index" OnClick="btnRebuildIndex_Click" />
+<asp:Button ID="btnRebuildIndex" runat="server" Text="Rebuild Index" OnClick="btnRebuildIndex_Click" />
+<asp:Button ID="btnClearIndex" runat="server" Text="Clear Index" OnClick="btnClearIndex_Click" />
 <%} %>
 
 <p>

@@ -14,7 +14,7 @@ namespace SolisSearch.Mapping
 
         public static void ConfigureItemMapping()
         {
-            Mapper.CreateMap<CmsSearchResultItem, CmsSearchResultItemClone>();
+            Mapper.CreateMap<CmsSearchResultItem, CmsSearchResultItemPublished>();
 
         }
     }

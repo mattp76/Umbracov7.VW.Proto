@@ -5,7 +5,7 @@ using System.Collections.ObjectModel;
 
 namespace SolisSearch.Entities
 {
-    public class CmsSearchResultItemClone
+    public class CmsSearchResultItemPublished
     {
         private ICollection<string> acl;
         private ICollection<string> alphaindex;
@@ -160,7 +160,7 @@ namespace SolisSearch.Entities
             }
         }
 
-        public CmsSearchResultItemClone()
+        public CmsSearchResultItemPublished()
         {
             this.CmsProperties = (IDictionary<string, object>)new Dictionary<string, object>();
         }

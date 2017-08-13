@@ -29,7 +29,6 @@ namespace SolisSearch.Solr
 
             //Startup.Init<CmsSearchResultItem>(serverUrl);
             Initializer.Initialized = true;
-
         }
 
         public static T ConvertExamp1<T>(object input)

@@ -58,7 +58,10 @@ namespace SolisSearch.Umb.UmbracoIntegration
                     {
                         this.log.AddLogentry(SolisSearch.Log.Enum.LogLevel.Debug, "Registering ContentServiceOnPublished to ContentService.Published event", (Exception)null);
                         // ISSUE: method pointer
+                        ContentService.Saved += ContentServiceOnSaved;
                         ContentService.Published += ContentServiceOnPublished;
+                        ContentService.Deleted += ContentServiceOnDeleted;
+                        ContentService.Deleting += ContentServiceOnDeleted;
                     }
                     else
                     {
@@ -73,6 +76,7 @@ namespace SolisSearch.Umb.UmbracoIntegration
                 this.log.AddLogentry(SolisSearch.Log.Enum.LogLevel.Debug, "Registering PublishingStrategyOnUnPublished to PublishingStrategy.UnPublished event", (Exception)null);
                 // ISSUE: method pointer
 
+                
                 Umbraco.Core.Publishing.PublishingStrategy.UnPublished += PublishingStrategyOnUnPublished;
 
                 this.log.AddLogentry(SolisSearch.Log.Enum.LogLevel.Debug, "Registering MediaServiceDeleted to MediaService.Deleted event", (Exception)null);
@@ -131,16 +135,39 @@ namespace SolisSearch.Umb.UmbracoIntegration
                 while (((IEnumerator)enumerator).MoveNext())
                 {
                     IContent current = enumerator.Current;
-                    indexingRepository.IndexNode(((IEntity)current).Id);
+                    indexingRepository.IndexNode(((IEntity)current).Id, true);
                 }
             }
             indexingRepository.BuildSpellcheckDictionary();
         }
 
+        private void ContentServiceOnSaved(IContentService sender, SaveEventArgs<IContent> SaveEventArgs)
+        {
+            IndexingRepository indexingRepository = new IndexingRepository((ICmsIndexer)new UmbracoIndexer(), (ILogFacade)new LogFacade(typeof(IndexingRepository)));
+
+            foreach (var n in SaveEventArgs.SavedEntities)
+            {
+                indexingRepository.IndexNode(n.Id, false);
+                indexingRepository.BuildSpellcheckDictionary();
+            }
+        }
+
+        private void ContentServiceOnDeleted(IContentService sender, DeleteEventArgs<IContent> SaveEventArgs)
+        {
+            IndexingRepository indexingRepository = new IndexingRepository((ICmsIndexer)new UmbracoIndexer(), (ILogFacade)new LogFacade(typeof(IndexingRepository)));
+
+            foreach (var n in SaveEventArgs.DeletedEntities)
+            {
+                indexingRepository.DeleteFromIndex(n.Id);
+            }
+        }
+
+
+
         private void DocumentOnAfterPublish(Document sender, PublishEventArgs publishEventArgs)
         {
             IndexingRepository indexingRepository = new IndexingRepository((ICmsIndexer)new UmbracoIndexer(), (ILogFacade)new LogFacade(typeof(IndexingRepository)));
-            indexingRepository.IndexNode(((CMSNode)sender).Id);
+            indexingRepository.IndexNode(((CMSNode)sender).Id, true);
             indexingRepository.BuildSpellcheckDictionary();
         }
 
@@ -187,7 +214,7 @@ namespace SolisSearch.Umb.UmbracoIntegration
                             }
                         }
                         this.log.AddLogentry(SolisSearch.Log.Enum.LogLevel.Debug, "Unpublishing document \"" + ((IUmbracoEntity)current1).Name + "\", removing from Solr index.", (Exception)null);
-                        indexingRepository.DeleteFromIndex((object)((IEntity)current1).Id);
+                        indexingRepository.DeleteFromPublishedIndex((object)((IEntity)current1).Id);
                     }
                     catch (Exception ex)
                     {

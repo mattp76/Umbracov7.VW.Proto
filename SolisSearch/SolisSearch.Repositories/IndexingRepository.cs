@@ -33,27 +33,31 @@ namespace SolisSearch.Repositories
             AutoMapperWebConfiguration.Configure();
         }
 
-        public void IndexItem(CmsSearchResultItem content)
+        public void IndexItem(CmsSearchResultItem content, bool isPublished)
         {
-            var contentClone = Mapper.Map<CmsSearchResultItemClone>(content);
-
-            if (ServiceLocator.Current.GetAllInstances<ISolrOperations<CmsSearchResultItem>>().Count() > 0)
+           
+            if (InstanceHelper.IsInstance(content))
             {
                 ISolrOperations<CmsSearchResultItem> instance = ServiceLocator.Current.GetInstance<ISolrOperations<CmsSearchResultItem>>();
                 instance.Add(content);
                 instance.Commit();
             }
 
-            if (ServiceLocator.Current.GetAllInstances<ISolrOperations<CmsSearchResultItemClone>>().Count() > 0)
+            if (isPublished)
             {
-                ISolrOperations<CmsSearchResultItemClone> instanceClone = ServiceLocator.Current.GetInstance<ISolrOperations<CmsSearchResultItemClone>>();
-                instanceClone.Add(contentClone);
-                instanceClone.Commit();
+                var contentPublished = Mapper.Map<CmsSearchResultItemPublished>(content);
+
+                if (InstanceHelper.IsInstance(contentPublished))
+                {
+                    ISolrOperations<CmsSearchResultItemPublished> instancePublished = ServiceLocator.Current.GetInstance<ISolrOperations<CmsSearchResultItemPublished>>();
+                    instancePublished.Add(contentPublished);
+                    instancePublished.Commit();
+                }
             }
 
         }
 
-        public void IndexNode(int id)
+        public void IndexNode(int id, bool isPublished)
         {
             if (!CurrentConfiguration.ConfigurationExists)
             {
@@ -68,7 +72,7 @@ namespace SolisSearch.Repositories
                     this.log.AddLogentry(SolisSearch.Log.Enum.LogLevel.Debug, string.Format("IndexRoot is set to {0}, checking if node is descendant.", (object)indexRoot), (Exception)null);
                     if (!((IEnumerable<string>)contentById.Path.Split(new string[1]
                     {
-            ","
+                        ","
                     }, StringSplitOptions.RemoveEmptyEntries)).Contains<string>(this.cmsIndexer.CmsEntityFactory.ActualId(contentById.Id)))
                     {
                         this.log.AddLogentry(SolisSearch.Log.Enum.LogLevel.Debug, string.Format("Node path {0} does not contain indexRoot {1}, node will not be indexed.", (object)contentById.Path, (object)indexRoot), (Exception)null);
@@ -84,7 +88,7 @@ namespace SolisSearch.Repositories
                 else
                 {
                     this.log.AddLogentry(SolisSearch.Log.Enum.LogLevel.Debug, "Saving indexitem to index", (Exception)null);
-                    this.IndexItem(searchResultItem);
+                    this.IndexItem(searchResultItem, isPublished);
                     if (!searchResultItem.Documents.Any<string>())
                         return;
                     foreach (string str in searchResultItem.Documents.Distinct<string>())
@@ -136,13 +140,27 @@ namespace SolisSearch.Repositories
 
         public int IndexItems(List<CmsSearchResultItem> items)
         {
+
+            var itemsPublished = Mapper.Map<List<CmsSearchResultItem>, List<CmsSearchResultItemPublished>>(items);
+
             ISolrOperations<CmsSearchResultItem> instance = ServiceLocator.Current.GetInstance<ISolrOperations<CmsSearchResultItem>>();
+            ISolrOperations<CmsSearchResultItemPublished> instancePublished = ServiceLocator.Current.GetInstance<ISolrOperations<CmsSearchResultItemPublished>>();
+            
+     
+
             int int32 = Convert.ToInt32(Math.Ceiling(Convert.ToDecimal(items.Count) / new Decimal(100)));
             for (int index = 0; index < int32; ++index)
             {
                 this.log.AddLogentry(SolisSearch.Log.Enum.LogLevel.Debug, string.Format("Indexing items {0} to {1}", (object)(100 * index), (object)(100 * (index + 1))), (Exception)null);
+
                 List<CmsSearchResultItem> list = items.Skip<CmsSearchResultItem>(100 * index).Take<CmsSearchResultItem>(100 * (index + 1)).ToList<CmsSearchResultItem>();
+                List<CmsSearchResultItemPublished> listPublished = itemsPublished.Skip<CmsSearchResultItemPublished>(100 * index).Take<CmsSearchResultItemPublished>(100 * (index + 1)).ToList<CmsSearchResultItemPublished>();
+
+
                 instance.AddRange((IEnumerable<CmsSearchResultItem>)list);
+                instancePublished.AddRange((IEnumerable<CmsSearchResultItemPublished>)listPublished);
+
+
                 this.log.AddLogentry(SolisSearch.Log.Enum.LogLevel.Debug, "Indexing documents in collection", (Exception)null);
                 foreach (CmsSearchResultItem searchResultItem in list.Where<CmsSearchResultItem>((Func<CmsSearchResultItem, bool>)(item => item.Documents.Any<string>())))
                 {
@@ -158,16 +176,35 @@ namespace SolisSearch.Repositories
                     }
                 }
             }
+
             instance.Commit();
             instance.Optimize();
+
+            instancePublished.Commit();
+            instancePublished.Optimize();
+
             return items.Count;
         }
 
         public void DeleteFromIndex(object id)
         {
             ISolrOperations<CmsSearchResultItem> instance = ServiceLocator.Current.GetInstance<ISolrOperations<CmsSearchResultItem>>();
+            ISolrOperations<CmsSearchResultItemPublished> instancePublished = ServiceLocator.Current.GetInstance<ISolrOperations<CmsSearchResultItemPublished>>();
+
             instance.Delete(id.ToString());
             instance.Commit();
+
+            instancePublished.Delete(id.ToString());
+            instancePublished.Commit();
+        }
+
+
+        public void DeleteFromPublishedIndex(object id)
+        {
+            ISolrOperations<CmsSearchResultItemPublished> instancePublished = ServiceLocator.Current.GetInstance<ISolrOperations<CmsSearchResultItemPublished>>();
+
+            instancePublished.Delete(id.ToString());
+            instancePublished.Commit();
         }
 
         public void DeleteMediaFromIndex(string mediaId)
@@ -180,9 +217,15 @@ namespace SolisSearch.Repositories
         public void ClearIndex()
         {
             ISolrOperations<CmsSearchResultItem> instance = ServiceLocator.Current.GetInstance<ISolrOperations<CmsSearchResultItem>>();
+            ISolrOperations<CmsSearchResultItemPublished> instancePublished = ServiceLocator.Current.GetInstance<ISolrOperations<CmsSearchResultItemPublished>>();
+
             this.log.AddLogentry(SolisSearch.Log.Enum.LogLevel.Info, "Clearing index", (Exception)null);
+
             instance.Delete((ISolrQuery)new SolrQuery("id:[* TO *]"));
             instance.Commit();
+
+            instancePublished.Delete((ISolrQuery)new SolrQuery("id:[* TO *]"));
+            instancePublished.Commit();
         }
 
         public void RebuildIndex()
